@@ -15,6 +15,7 @@ fn main() {
     let lines = read_stream.lines();
 
     for (index, line) in lines.enumerate() {
-        println!("{: >4} > {}", index, line.expect("Read error"));
+        let text = line.expect("Read error");
+        println!("{: >4} > {}", index, text);
     }
 }
