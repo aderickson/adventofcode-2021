@@ -26,27 +26,15 @@ fn main() {
     let text_string = fs::read_to_string(path).unwrap();
     let lines = text_string.split('\n');
 
-    let measurements = lines.map(|line|
-        line.parse::<u32>().unwrap()
-    );
+    let measurements : Vec<u32> = lines.map(|line|
+        line.parse().unwrap()
+    ).collect();
 
     let mut num_increasing = 0;
-    let mut previous = 0;
 
-    for (index, measurement) in measurements.enumerate() {
-        if index == 0 {
-            previous = measurement;
-            println!("{}: {}", index, measurement);
-            continue;
-        }
-
-        if previous < measurement {
-            previous = measurement;
+    for index in 0..(measurements.len() - 3) {
+        if measurements[index] < measurements[index + 3] {
             num_increasing += 1;
-            println!("{}: {}, increasing", index, measurement);
-        } else {
-            previous = measurement;
-            println!("{}: {}, not increasing", index, measurement);
         }
     }
 
