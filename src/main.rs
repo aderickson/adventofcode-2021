@@ -1,12 +1,6 @@
 use std::{env, fs};
 
 #[derive(Debug)]
-struct PasswordLine<'a> {
-    character : char,
-    position_one : usize,
-    position_two : usize,
-    string : &'a str
-}
 
 fn main() {
     let args: Vec<String> = env::args().collect();
