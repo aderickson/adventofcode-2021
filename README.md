@@ -26,7 +26,7 @@ These are links to tags in my git history as I've decided not to organize all th
     </tr>
     <tr>
       <td colspan="2" align="center">
-        <a href="https://github.com/aderickson/adventofcode-2021/blob/day-1-combined/src/solutions.rs" target="_blank">day-1</a>
+        <a href="https://github.com/aderickson/adventofcode-2021/blob/day-1-combined/src/solutions.rs" target="_blank">day-1 combined</a>
       </td>
     </tr>
     <!--tr>
