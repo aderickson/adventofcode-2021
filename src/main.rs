@@ -1,6 +1,7 @@
 use std::env;
+use std::time::Instant;
 use std::fs::File;
-use std::io::{BufReader, BufRead};
+use std::io::{BufRead, BufReader, Lines, Read, Seek};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -18,8 +19,48 @@ fn main() {
     println!("Reading {}", path);
 
     let file_handle = File::open(path).expect("Unable to open file");
-    let lines = BufReader::new(file_handle).lines();
+    let mut reader = BufReader::new(file_handle);
 
+    let line_iter = reader.by_ref().lines();
+    let start = Instant::now();
+    let result = part_one(line_iter);
+    let duration = start.elapsed();
+
+    println!("Part 1: {} ({} μs)", result, duration.as_micros());
+
+    reader.rewind().unwrap();
+
+    let line_iter = reader.by_ref().lines();
+    let start = Instant::now();
+    let result = part_two(line_iter);
+    let duration = start.elapsed();
+
+    println!("Part 2: {} ({} μs)", result, duration.as_micros());
+}
+
+fn part_one(lines : Lines<&mut BufReader<File>>) -> u32 {
+    let measurements = lines.map(|line|
+        line.unwrap().parse().unwrap()
+    );
+
+    let mut num_increasing = 0;
+    let mut previous = 0;
+
+    for (index, measurement) in measurements.enumerate() {
+        if index == 0 {
+            previous = measurement;
+        } else if previous < measurement {
+            previous = measurement;
+            num_increasing += 1;
+        } else {
+            previous = measurement;
+        }
+    }
+
+    return num_increasing;
+}
+
+fn part_two(lines : Lines<&mut BufReader<File>>) -> u32 {
     let measurements : Vec<u32> = lines.map(|line|
         line.unwrap().parse().unwrap()
     ).collect();
@@ -31,6 +72,6 @@ fn main() {
             num_increasing += 1;
         }
     }
-
-    println!("{}", num_increasing);
+    
+    return num_increasing
 }
