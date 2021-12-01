@@ -6,6 +6,8 @@ Obviously, puzzle spoilers are contained herein, so tread cautiously if you care
 
 ### Solutions:
 
+These are links to tags in my git history as I've decided not to organize all the days in the repo this year.
+
 <table>
   <thead>
     <th>Day</th>
@@ -14,12 +16,17 @@ Obviously, puzzle spoilers are contained herein, so tread cautiously if you care
   </thead>
   <tbody>
     <tr>
-      <td>One</td>
+      <td rowspan="2">One</td>
       <td>
         <a href="https://github.com/aderickson/adventofcode-2021/blob/day-1-1/src/main.rs" target="_blank">day-1-1</a>
       </td>
       <td>
         <a href="https://github.com/aderickson/adventofcode-2021/blob/day-1-2/src/main.rs" target="_blank">day-1-2</a>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" align="center">
+        <a href="https://github.com/aderickson/adventofcode-2021/blob/day-1-combined/src/solutions.rs" target="_blank">day-1</a>
       </td>
     </tr>
     <!--tr>
