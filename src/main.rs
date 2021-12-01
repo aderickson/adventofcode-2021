@@ -1,4 +1,6 @@
-use std::{env, fs};
+use std::env;
+use std::fs::File;
+use std::io::{BufReader, BufRead};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -15,11 +17,11 @@ fn main() {
 
     println!("Reading {}", path);
 
-    let text_string = fs::read_to_string(path).unwrap();
-    let lines = text_string.split('\n');
+    let file_handle = File::open(path).expect("Unable to open file");
+    let lines = BufReader::new(file_handle).lines();
 
     let measurements : Vec<u32> = lines.map(|line|
-        line.parse().unwrap()
+        line.unwrap().parse().unwrap()
     ).collect();
 
     let mut num_increasing = 0;
