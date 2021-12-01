@@ -1,7 +1,6 @@
-use std::env;
+use std::str::Split;
+use std::{env, fs};
 use std::time::Instant;
-use std::fs::File;
-use std::io::{BufRead, BufReader, Lines, Read, Seek};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -18,29 +17,27 @@ fn main() {
 
     println!("Reading {}", path);
 
-    let file_handle = File::open(path).expect("Unable to open file");
-    let mut reader = BufReader::new(file_handle);
+    let file = fs::read_to_string(path).unwrap();
 
-    let line_iter = reader.by_ref().lines();
+    let lines = file.split('\n');
     let start = Instant::now();
-    let result = part_one(line_iter);
+    let result = part_one(lines);
     let duration = start.elapsed();
 
     println!("Part 1: {} ({} μs)", result, duration.as_micros());
 
-    reader.rewind().unwrap();
 
-    let line_iter = reader.by_ref().lines();
+    let lines = file.split('\n');
     let start = Instant::now();
-    let result = part_two(line_iter);
+    let result = part_two(lines);
     let duration = start.elapsed();
 
     println!("Part 2: {} ({} μs)", result, duration.as_micros());
 }
 
-fn part_one(lines : Lines<&mut BufReader<File>>) -> u32 {
+fn part_one(lines : Split<char>) -> u32 {
     let measurements : Vec<u32> = lines.map(|line|
-        line.unwrap().parse().unwrap()
+        line.parse().unwrap()
     ).collect();
 
     let mut num_increasing = 0;
@@ -54,9 +51,9 @@ fn part_one(lines : Lines<&mut BufReader<File>>) -> u32 {
     return num_increasing;
 }
 
-fn part_two(lines : Lines<&mut BufReader<File>>) -> u32 {
+fn part_two(lines : Split<char>) -> u32 {
     let measurements : Vec<u32> = lines.map(|line|
-        line.unwrap().parse().unwrap()
+        line.parse().unwrap()
     ).collect();
 
     let mut num_increasing = 0;
