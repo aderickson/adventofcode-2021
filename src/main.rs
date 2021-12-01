@@ -39,21 +39,15 @@ fn main() {
 }
 
 fn part_one(lines : Lines<&mut BufReader<File>>) -> u32 {
-    let measurements = lines.map(|line|
+    let measurements : Vec<u32> = lines.map(|line|
         line.unwrap().parse().unwrap()
-    );
+    ).collect();
 
     let mut num_increasing = 0;
-    let mut previous = 0;
 
-    for (index, measurement) in measurements.enumerate() {
-        if index == 0 {
-            previous = measurement;
-        } else if previous < measurement {
-            previous = measurement;
+    for index in 0..(measurements.len() - 1) {
+        if measurements[index] < measurements[index + 1] {
             num_increasing += 1;
-        } else {
-            previous = measurement;
         }
     }
 
