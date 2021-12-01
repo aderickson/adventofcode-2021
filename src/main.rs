@@ -1,7 +1,5 @@
 use std::{env, fs};
 
-#[derive(Debug)]
-
 fn main() {
     let args: Vec<String> = env::args().collect();
 
