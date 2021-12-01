@@ -1,6 +1,4 @@
-use std::str::Split;
-
-pub fn part_one(lines : Split<char>) -> u32 {
+pub fn part_one<'a>(lines : impl Iterator<Item = &'a str>) -> u32 {
   let measurements : Vec<u32> = lines.map(|line|
       line.parse().unwrap()
   ).collect();
@@ -16,7 +14,7 @@ pub fn part_one(lines : Split<char>) -> u32 {
   return num_increasing;
 }
 
-pub fn part_two(lines : Split<char>) -> u32 {
+pub fn part_two<'a>(lines : impl Iterator<Item = &'a str>) -> u32 {
   let measurements : Vec<u32> = lines.map(|line|
       line.parse().unwrap()
   ).collect();
