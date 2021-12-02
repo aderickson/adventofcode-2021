@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 enum Direction {
     Up,
     Down,
@@ -5,31 +7,55 @@ enum Direction {
     Backward
 }
 
+#[derive(Debug)]
+struct AocError {}
+
+impl FromStr for Direction {
+    type Err = AocError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "up" => Ok(Direction::Up),
+            "down" => Ok(Direction::Down),
+            "forward" => Ok(Direction::Forward),
+            "backward" => Ok(Direction::Backward),
+            _ => return Err(AocError{})
+        }
+    }
+}
+
 struct NavStep {
     direction: Direction,
     length: i32
 }
 
+impl FromStr for NavStep {
+    type Err = AocError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let words : Vec<&str> = s.split(' ').collect();
+
+        if words.len() != 2 {
+            return Err(AocError {})
+        }
+
+        let direction = words[0].parse::<Direction>()?;
+        let length = words[1].parse::<i32>();
+
+        if length.is_err() {
+            return Err(AocError {});
+        }
+
+        Ok(NavStep {
+            direction,
+            length: length.unwrap()
+        })
+    }
+}
+
 pub fn part_one<'a>(lines : impl Iterator<Item = &'a str>) -> i32 {
     let steps = lines.map(|line| {
-        let words : Vec<&str> = line.split(' ').collect();
-
-        assert!(words.len() == 2, "Line did not have two words");
-
-        let direction = match words[0] {
-            "up" => Direction::Up,
-            "down" => Direction::Down,
-            "forward" => Direction::Forward,
-            "backward" => Direction::Backward,
-            _ => panic!("Unknown direction")
-        };
-
-        let length = words[1].parse().unwrap();
-
-        NavStep {
-            direction,
-            length
-        }
+        line.parse::<NavStep>().unwrap()
     });
 
     let mut total_lateral : i32 = 0;
@@ -49,24 +75,7 @@ pub fn part_one<'a>(lines : impl Iterator<Item = &'a str>) -> i32 {
 
 pub fn part_two<'a>(lines : impl Iterator<Item = &'a str>) -> i32 {
     let steps = lines.map(|line| {
-        let words : Vec<&str> = line.split(' ').collect();
-
-        assert!(words.len() == 2, "Line did not have two words");
-
-        let direction = match words[0] {
-            "up" => Direction::Up,
-            "down" => Direction::Down,
-            "forward" => Direction::Forward,
-            "backward" => Direction::Backward,
-            _ => panic!("Unknown direction")
-        };
-
-        let length = words[1].parse().unwrap();
-
-        NavStep {
-            direction,
-            length
-        }
+        line.parse::<NavStep>().unwrap()
     });
 
     let mut total_lateral : i32 = 0;
