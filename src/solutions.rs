@@ -1,101 +1,49 @@
-use std::str::FromStr;
+pub fn part_one<'a>(lines : impl Iterator<Item = &'a str>) -> u32 {
+    let mut lines = lines.peekable();
 
-enum Direction {
-    Up,
-    Down,
-    Forward,
-    Backward
-}
-
-#[derive(Debug)]
-struct AocError {}
-
-impl FromStr for Direction {
-    type Err = AocError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "up" => Ok(Direction::Up),
-            "down" => Ok(Direction::Down),
-            "forward" => Ok(Direction::Forward),
-            "backward" => Ok(Direction::Backward),
-            _ => return Err(AocError{})
-        }
-    }
-}
-
-struct NavStep {
-    direction: Direction,
-    length: i32
-}
-
-impl FromStr for NavStep {
-    type Err = AocError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let words : Vec<&str> = s.split(' ').collect();
-
-        if words.len() != 2 {
-            return Err(AocError {})
-        }
-
-        let direction = words[0].parse::<Direction>()?;
-        let length = words[1].parse::<i32>();
-
-        if length.is_err() {
-            return Err(AocError {});
-        }
-
-        Ok(NavStep {
-            direction,
-            length: length.unwrap()
-        })
-    }
-}
-
-pub fn part_one<'a>(lines : impl Iterator<Item = &'a str>) -> i32 {
-    let steps = lines.map(|line| {
-        line.parse::<NavStep>().unwrap()
+    let width = lines.peek().unwrap().len();
+    let numbers = lines.map(|line| {
+        u32::from_str_radix(line, 2).unwrap()
     });
 
-    let mut total_lateral : i32 = 0;
-    let mut total_vertical : i32 = 0;
-    
-    for step in steps {
-        match step.direction {
-            Direction::Forward => total_lateral += step.length,
-            Direction::Backward => total_lateral -= step.length,
-            Direction::Down => total_vertical += step.length,
-            Direction::Up => total_vertical -= step.length,
-        }
-    }
+    let mut count = 0u32;
+    let mut positions = vec![0u32; width];
 
-    return total_lateral * total_vertical;
-}
+    for number in numbers {
+        let mut number = number;
+        let mut pow = 0;
+        count += 1;
 
-pub fn part_two<'a>(lines : impl Iterator<Item = &'a str>) -> i32 {
-    let steps = lines.map(|line| {
-        line.parse::<NavStep>().unwrap()
-    });
-
-    let mut total_lateral : i32 = 0;
-    let mut total_vertical : i32 = 0;
-    let mut aim : i32 = 0;
-    
-    for step in steps {
-        match step.direction {
-            Direction::Forward => {
-                total_lateral += step.length;
-                total_vertical += aim * step.length
-            },
-            Direction::Backward => {
-                total_lateral -= step.length;
-                total_vertical -= aim * step.length
+        while number > 0 {
+            if number & 0x0001 != 0 {
+                positions[pow] += 1;
             }
-            Direction::Down => aim += step.length,
-            Direction::Up => aim -= step.length,
+
+            number /= 2;
+            pow += 1;
         }
     }
 
-    return total_lateral * total_vertical;
+    let bits = positions.iter().map(|position_count| {
+        if *position_count > count / 2 {
+            return 1;
+        } else {
+            return 0;
+        }
+    });
+
+    let mut gamma_rate = 0u32;
+    let mut epsilon_rate = 0u32;
+    let mut pow = 1u32;
+    for bit in bits {
+        gamma_rate += bit * pow;
+        epsilon_rate += (bit + 1) % 2 * pow;
+        pow *= 2;
+    }
+
+    return gamma_rate * epsilon_rate;
+}
+
+pub fn part_two<'a>(lines : impl Iterator<Item = &'a str>) -> u32 {
+    panic!("Not implemented")
 }
