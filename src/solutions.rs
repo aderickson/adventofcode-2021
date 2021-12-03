@@ -45,5 +45,64 @@ pub fn part_one<'a>(lines : impl Iterator<Item = &'a str>) -> u32 {
 }
 
 pub fn part_two<'a>(lines : impl Iterator<Item = &'a str>) -> u32 {
-    panic!("Not implemented")
+    let mut lines = lines.peekable();
+
+    let width = lines.peek().unwrap().len();
+    let numbers : Vec<u32> = lines.map(|line| {
+        u32::from_str_radix(line, 2).unwrap()
+    }).collect();
+
+    let mut numbers_oxy = numbers.clone();
+    let mut numbers_co2 = numbers.clone();
+
+    let mut power = 2u32.pow(width as u32 - 1);
+    while numbers_oxy.len() > 1 && power > 0 {
+        let mut has_one = Vec::<u32>::new();
+        let mut has_zero = Vec::<u32>::new();
+        for number in numbers_oxy {
+            if number & power == power {
+                has_one.push(number);
+            } else {
+                has_zero.push(number);
+            }
+        }
+        
+        if has_one.len() >= has_zero.len() {
+            numbers_oxy = has_one;
+        } else {
+            numbers_oxy = has_zero;
+        }
+
+        power /= 2;
+    }
+
+    let mut power = 2u32.pow(width as u32 - 1);
+    while numbers_co2.len() > 1 && power > 0 {
+        let mut has_one = Vec::<u32>::new();
+        let mut has_zero = Vec::<u32>::new();
+        for number in numbers_co2 {
+            if number & power == power {
+                has_one.push(number);
+            } else {
+                has_zero.push(number);
+            }
+        }
+        
+        if has_zero.len() <= has_one.len() {
+            numbers_co2 = has_zero;
+        } else {
+            numbers_co2 = has_one;
+        }
+
+        power /= 2;
+    }
+
+    if numbers_oxy.len() != 1 || numbers_co2.len() != 1 {
+        panic!("Did not reduce list down to one number");
+    }
+
+    let oxy = numbers_oxy[0];
+    let co2 = numbers_co2[0];
+
+    return oxy * co2;
 }
