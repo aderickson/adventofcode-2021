@@ -19,10 +19,6 @@ fn main() {
         path = args[1].as_str();
     }
 
-    println!("Reading {}", path);
-
-    // let file = fs::read_to_string(path).unwrap();
-
     let file = FileReader::new(path);
 
     let start = Instant::now();

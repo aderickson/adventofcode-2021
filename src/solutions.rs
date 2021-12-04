@@ -1,106 +1,151 @@
 use crate::file::FileReader;
 
-pub fn part_one(mut lines : FileReader) -> u32 {
-    let width = lines.get_width_next();
-    let numbers = lines.map(|line| {
-        u32::from_str_radix(line.as_str(), 2).unwrap()
-    });
+static WIN_PATTERNS : [u32 ; 10] = [
+    0b1111100000000000000000000,
+    0b0000011111000000000000000,
+    0b0000000000111110000000000,
+    0b0000000000000001111100000,
+    0b0000000000000000000011111,
+    0b1000010000100001000010000,
+    0b0100001000010000100001000,
+    0b0010000100001000010000100,
+    0b0001000010000100001000010,
+    0b0000100001000010000100001
+];
 
-    let mut count = 0u32;
-    let mut positions = vec![0u32; width];
+struct BingoBoard {
+    numbers : [u32 ; 25],
+    marks : u32
+}
 
-    for number in numbers {
-        let mut number = number;
-        let mut pow = 0;
-        count += 1;
+impl BingoBoard {
+    pub fn parse(reader : &mut FileReader) -> Self {
+        let marks = 0;
+        let mut numbers : Vec<u32> = Vec::new();
+        
+        for _ in 0..5 {
+            let row = reader.next().unwrap();
 
-        while number > 0 {
-            if number & 0x0001 != 0 {
-                positions[pow] += 1;
+            for num in row.split_whitespace() {
+                numbers.push(num.parse().unwrap())
             }
+        }
 
-            number /= 2;
-            pow += 1;
+        return BingoBoard {
+            marks,
+            numbers: numbers.try_into().unwrap()
         }
     }
 
-    let bits = positions.iter().map(|position_count| {
-        if *position_count > count / 2 {
-            return 1;
-        } else {
-            return 0;
-        }
-    });
+    pub fn mark_board(&mut self, number : u32) {
+        let mut index = 0;
+        let mut found = false;
 
-    let mut gamma_rate = 0u32;
-    let mut epsilon_rate = 0u32;
-    let mut pow = 1u32;
-    for bit in bits {
-        gamma_rate += bit * pow;
-        epsilon_rate += (bit + 1) % 2 * pow;
-        pow *= 2;
+        for i in 0..self.numbers.len() {
+            if self.numbers[i] == number {
+                index = i;
+                found = true;
+                break;
+            }
+        }
+
+        if !found {
+            return;
+        }
+
+        let marker = 2u32.pow(index as u32);
+        self.marks |= marker;
     }
 
-    return gamma_rate * epsilon_rate;
+    pub fn has_won(&self) -> bool{
+        for win_pattern in WIN_PATTERNS {
+            if self.marks & win_pattern == win_pattern {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    pub fn get_score(&self) -> u32 {
+        let mut score = 0;
+
+        for index in 0..self.numbers.len() {
+            let bit_flag = 2u32.pow(index as u32);
+            if !self.marks & bit_flag != 0 {
+                score += self.numbers[index];
+            }
+        }
+
+        return score;
+    }
+}
+
+pub fn part_one(mut lines : FileReader) -> u32 {
+    let first_line = lines.next().unwrap();
+
+    let numbers = first_line.split(',').map(|s| s.parse::<u32>().unwrap());
+    let mut boards  = Vec::new();
+
+    while let Some(_) = lines.next() {
+        boards.push(BingoBoard::parse(&mut lines));
+    }
+
+    let mut winning_board = 0;
+    let mut found_board = false;
+    let mut last_num = 0;
+
+    'outer: for number in numbers {
+        last_num = number;
+        for (index, board) in boards.iter_mut().enumerate() {
+            board.mark_board(number);
+            if board.has_won() {
+                winning_board = index;
+                found_board = true;
+                break 'outer;
+            }
+        }
+    }
+
+    if !found_board {
+        panic!("No board won!");
+    }
+
+    return last_num * boards[winning_board].get_score();
 }
 
 pub fn part_two(mut lines : FileReader) -> u32 {
-    let width = lines.get_width_next();
-    let numbers : Vec<u32> = lines.map(|line| {
-        u32::from_str_radix(line.as_str(), 2).unwrap()
-    }).collect();
+    let first_line = lines.next().unwrap();
 
-    let mut numbers_oxy = numbers.clone();
-    let mut numbers_co2 = numbers.clone();
+    let numbers = first_line.split(',').map(|s| s.parse::<u32>().unwrap());
+    let mut boards  = Vec::new();
 
-    let mut power = 2u32.pow(width as u32 - 1);
-    while numbers_oxy.len() > 1 && power > 0 {
-        let mut has_one = Vec::<u32>::new();
-        let mut has_zero = Vec::<u32>::new();
-        for number in numbers_oxy {
-            if number & power == power {
-                has_one.push(number);
-            } else {
-                has_zero.push(number);
+    while let Some(_) = lines.next() {
+        boards.push(BingoBoard::parse(&mut lines));
+    }
+
+    let num_boards = boards.len();
+    let mut last_num = 0;
+    let mut winning_boards = Vec::new();
+    let mut last_board = 0;
+
+    'outer: for number in numbers {
+        last_num = number;
+        for (index, board) in boards.iter_mut().enumerate() {
+            if winning_boards.contains(&index) {
+                continue;
+            }
+
+            board.mark_board(number);
+            if board.has_won() {
+                winning_boards.push(index);
+                if winning_boards.len() == num_boards {
+                    last_board = index;
+                    break 'outer;
+                }
             }
         }
-
-        if has_one.len() >= has_zero.len() {
-            numbers_oxy = has_one;
-        } else {
-            numbers_oxy = has_zero;
-        }
-
-        power /= 2;
     }
 
-    let mut power = 2u32.pow(width as u32 - 1);
-    while numbers_co2.len() > 1 && power > 0 {
-        let mut has_one = Vec::<u32>::new();
-        let mut has_zero = Vec::<u32>::new();
-        for number in numbers_co2 {
-            if number & power == power {
-                has_one.push(number);
-            } else {
-                has_zero.push(number);
-            }
-        }
-
-        if has_zero.len() <= has_one.len() {
-            numbers_co2 = has_zero;
-        } else {
-            numbers_co2 = has_one;
-        }
-
-        power /= 2;
-    }
-
-    if numbers_oxy.len() != 1 || numbers_co2.len() != 1 {
-        panic!("Did not reduce list down to one number");
-    }
-
-    let oxy = numbers_oxy[0];
-    let co2 = numbers_co2[0];
-
-    return oxy * co2;
+    return last_num * boards[last_board].get_score();
 }
