@@ -1,4 +1,6 @@
-use std::{env, fs};
+use std::fs::File;
+use std::io::{self, BufRead};
+use std::env;
 use std::time::Instant;
 
 mod solutions;
@@ -18,17 +20,18 @@ fn main() {
 
     println!("Reading {}", path);
 
-    let file = fs::read_to_string(path).unwrap();
+    // let file = fs::read_to_string(path).unwrap();
 
-    let lines = file.split('\n');
+    let file = File::open(path).expect("Could not open input file");
+    let lines = io::BufReader::new(file).lines();
     let start = Instant::now();
     let result = solutions::part_one(lines);
     let duration = start.elapsed();
 
     println!("Part 1: {} ({} μs)", result, duration.as_micros());
 
-
-    let lines = file.split('\n');
+    let file = File::open(path).expect("Could not open input file");
+    let lines = io::BufReader::new(file).lines();
     let start = Instant::now();
     let result = solutions::part_two(lines);
     let duration = start.elapsed();

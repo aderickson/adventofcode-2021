@@ -1,9 +1,10 @@
-pub fn part_one<'a>(lines : impl Iterator<Item = &'a str>) -> u32 {
+pub fn part_one<'a>(lines : impl Iterator<Item = Result<String, std::io::Error>>) -> u32 {
     let mut lines = lines.peekable();
 
-    let width = lines.peek().unwrap().len();
+    let width = lines.peek().unwrap().as_ref().map(|s| s.len()).unwrap();
     let numbers = lines.map(|line| {
-        u32::from_str_radix(line, 2).unwrap()
+        let line = line.unwrap();
+        u32::from_str_radix(line.as_str(), 2).unwrap()
     });
 
     let mut count = 0u32;
@@ -44,12 +45,13 @@ pub fn part_one<'a>(lines : impl Iterator<Item = &'a str>) -> u32 {
     return gamma_rate * epsilon_rate;
 }
 
-pub fn part_two<'a>(lines : impl Iterator<Item = &'a str>) -> u32 {
+pub fn part_two<'a>(lines : impl Iterator<Item = Result<String, std::io::Error>>) -> u32 {
     let mut lines = lines.peekable();
 
-    let width = lines.peek().unwrap().len();
+    let width = lines.peek().unwrap().as_ref().map(|s| s.len()).unwrap();
     let numbers : Vec<u32> = lines.map(|line| {
-        u32::from_str_radix(line, 2).unwrap()
+        let line = line.unwrap();
+        u32::from_str_radix(line.as_str(), 2).unwrap()
     }).collect();
 
     let mut numbers_oxy = numbers.clone();
