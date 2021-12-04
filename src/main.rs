@@ -19,6 +19,8 @@ fn main() {
         path = args[1].as_str();
     }
 
+    println!("Using {}", path);
+
     let file = FileReader::new(path);
 
     let start = Instant::now();

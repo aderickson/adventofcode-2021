@@ -11,8 +11,6 @@ pub struct FileReader {
 #[allow(dead_code)]
 impl FileReader {
     pub fn new(path: &str) -> Self {
-        println!("Reading {}", path);
-
         let lines = if let Ok(file) = File::open(path) {
             io::BufReader::with_capacity(1024000, file).lines().peekable()
         } else {
