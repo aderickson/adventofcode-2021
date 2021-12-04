@@ -1,9 +1,8 @@
-pub fn part_one<'a>(lines : impl Iterator<Item = Result<String, std::io::Error>>) -> u32 {
-    let mut lines = lines.peekable();
+use crate::file::FileReader;
 
-    let width = lines.peek().unwrap().as_ref().map(|s| s.len()).unwrap();
+pub fn part_one(mut lines : FileReader) -> u32 {
+    let width = lines.get_width_next();
     let numbers = lines.map(|line| {
-        let line = line.unwrap();
         u32::from_str_radix(line.as_str(), 2).unwrap()
     });
 
@@ -45,12 +44,9 @@ pub fn part_one<'a>(lines : impl Iterator<Item = Result<String, std::io::Error>>
     return gamma_rate * epsilon_rate;
 }
 
-pub fn part_two<'a>(lines : impl Iterator<Item = Result<String, std::io::Error>>) -> u32 {
-    let mut lines = lines.peekable();
-
-    let width = lines.peek().unwrap().as_ref().map(|s| s.len()).unwrap();
+pub fn part_two(mut lines : FileReader) -> u32 {
+    let width = lines.get_width_next();
     let numbers : Vec<u32> = lines.map(|line| {
-        let line = line.unwrap();
         u32::from_str_radix(line.as_str(), 2).unwrap()
     }).collect();
 
@@ -68,7 +64,7 @@ pub fn part_two<'a>(lines : impl Iterator<Item = Result<String, std::io::Error>>
                 has_zero.push(number);
             }
         }
-        
+
         if has_one.len() >= has_zero.len() {
             numbers_oxy = has_one;
         } else {
@@ -89,7 +85,7 @@ pub fn part_two<'a>(lines : impl Iterator<Item = Result<String, std::io::Error>>
                 has_zero.push(number);
             }
         }
-        
+
         if has_zero.len() <= has_one.len() {
             numbers_co2 = has_zero;
         } else {

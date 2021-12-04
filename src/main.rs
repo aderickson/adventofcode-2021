@@ -1,9 +1,10 @@
-use std::fs::File;
-use std::io::{self, BufRead};
+mod file;
+mod solutions;
+
+use crate::file::FileReader;
+
 use std::env;
 use std::time::Instant;
-
-mod solutions;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -22,18 +23,18 @@ fn main() {
 
     // let file = fs::read_to_string(path).unwrap();
 
-    let file = File::open(path).expect("Could not open input file");
-    let lines = io::BufReader::new(file).lines();
+    let file = FileReader::new(path);
+
     let start = Instant::now();
-    let result = solutions::part_one(lines);
+    let result = solutions::part_one(file);
     let duration = start.elapsed();
 
     println!("Part 1: {} ({} μs)", result, duration.as_micros());
 
-    let file = File::open(path).expect("Could not open input file");
-    let lines = io::BufReader::new(file).lines();
+    let file = FileReader::new(path);
+
     let start = Instant::now();
-    let result = solutions::part_two(lines);
+    let result = solutions::part_two(file);
     let duration = start.elapsed();
 
     println!("Part 2: {} ({} μs)", result, duration.as_micros());
