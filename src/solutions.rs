@@ -88,7 +88,7 @@ pub fn part_one(lines : FileReader) -> u32 {
 
         return Line::new(start, end);
     }).filter(|line| 
-        !(line.start.x != line.end.x && line.start.y != line.end.y)
+        line.start.x == line.end.x || line.start.y == line.end.y
     );
 
     let mut intersections = HashMap::new();
