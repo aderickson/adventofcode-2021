@@ -44,5 +44,11 @@ These are links to tags in my git history as I've decided not to organize all th
         <a href="https://github.com/aderickson/adventofcode-2021/blob/day-5/src/solutions.rs" target="_blank">day-5</a>
       </td>
     </tr>
+    <tr>
+      <td>Six</td>
+      <td>
+        <a href="https://github.com/aderickson/adventofcode-2021/blob/day-6/src/solutions.rs" target="_blank">day-6</a>
+      </td>
+    </tr>
   </tbody>
 </table>
